@@ -1,3 +1,4 @@
+import { TEXT_PREVIEW_CHARACTERS } from "./constants.js";
 import type { ExaSearchFailed, ExaSearchSuccess } from "./schemas.js";
 
 /**
@@ -16,7 +17,8 @@ export const formatResults = (success: ExaSearchSuccess): string => {
       if (r.highlights && r.highlights.length > 0) {
         lines.push(`   Highlights:\n${r.highlights.map((h) => `   > ${h}`).join("\n")}`);
       } else if (r.text) {
-        lines.push(`   Content: ${r.text.slice(0, 500)}...`);
+        const preview = r.text.slice(0, TEXT_PREVIEW_CHARACTERS);
+        lines.push(`   Content: ${preview}${r.text.length > TEXT_PREVIEW_CHARACTERS ? "..." : ""}`);
       }
       return lines.join("\n");
     })

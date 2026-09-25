@@ -16,7 +16,9 @@ import plugin, {
 import { Effect } from "effect";
 
 test("plugin has correct id and kind", () => {
-  assert.equal(plugin.id, "codework.tool.exa");
+  assert.equal(plugin.id, "exa.tool.search");
+  // The harness refuses the reserved `codework.` namespace and anything but `vendor.domain.context`.
+  assert.match(plugin.id, /^(?!codework\.)[a-z0-9][a-z0-9-]*(\.[a-z0-9][a-z0-9-]*){2}$/);
   assert.equal(plugin.kind, "tool");
 });
 
@@ -101,7 +103,15 @@ test("formatResults produces readable markdown", () => {
   assert.ok(formatted.includes("> First highlight"));
   assert.ok(formatted.includes("> Second highlight"));
   assert.ok(formatted.includes("2. [Untitled](https://example.org/doc)"));
-  assert.ok(formatted.includes("Content: Some fallback text content"));
+  assert.ok(formatted.includes("Content: Some fallback text content that is longer"));
+  // Short text is shown whole, with no ellipsis pretending it was cut.
+  assert.ok(!formatted.includes("longer..."));
+
+  const long = formatResults({
+    query: "q",
+    results: [{ title: "t", url: "https://e.com", publishedDate: null, author: null, text: "x".repeat(600) }],
+  });
+  assert.ok(long.includes(`Content: ${"x".repeat(500)}...`));
 });
 
 test("formatError produces readable error string", () => {
@@ -123,14 +133,18 @@ test("buildSearchRequestBody formats payload correctly", () => {
       query: "codework agents",
       includeDomains: ["github.com"],
       excludeDomains: ["badsite.com"],
-      type: "neural",
+      type: "deep",
     },
     8,
   );
 
   assert.equal(body.query, "codework agents");
   assert.equal(body.numResults, 8);
-  assert.equal(body.type, "neural");
+  assert.equal(body.type, "deep");
+  // Retired by Exa: autoprompting is gone, and highlights are sized in characters.
+  assert.equal("useAutoprompt" in body, false);
+  assert.deepEqual(body.contents.highlights, { maxCharacters: 600 });
+  assert.equal(buildSearchRequestBody({ query: "q" }, 5).type, "auto");
   assert.deepEqual(body.includeDomains, ["github.com"]);
   assert.deepEqual(body.excludeDomains, ["badsite.com"]);
 });
@@ -142,7 +156,8 @@ test("searchExa fails if apiKey is missing", async () => {
 
   const failure = await Effect.runPromise(Effect.flip(effect));
   assert.ok(failure instanceof ExaSearchFailed);
-  assert.ok(failure.message.includes("EXA_API_KEY is not configured"));
+  assert.ok(failure.message.includes("Exa API key is not configured"));
+  assert.ok(failure.message.includes("EXA_API_KEY"));
 });
 
 test("searchExa handles successful API response", async () => {
@@ -192,6 +207,15 @@ test("searchExa handles API errors gracefully", async () => {
   const failure = await Effect.runPromise(Effect.flip(effect));
   assert.ok(failure instanceof ExaSearchFailed);
   assert.ok(failure.message.includes("Exa API returned 401: Invalid API key"));
+});
+
+test("searchExa fails cleanly on a response it does not recognise", async () => {
+  const mockFetch = async () => ({ ok: true, json: async () => ({ error: "nope" }) });
+  const failure = await Effect.runPromise(
+    Effect.flip(searchExa({ apiKey: "k", params: { query: "q" }, fetchFn: mockFetch })),
+  );
+  assert.ok(failure instanceof ExaSearchFailed);
+  assert.ok(failure.message.startsWith("Exa API returned an unexpected response"));
 });
 
 test("createExaSearchTool definition has correct metadata and encoders", () => {

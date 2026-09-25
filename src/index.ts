@@ -10,7 +10,9 @@ export * from "./client.js";
 export * from "./tool.js";
 
 export default Plugin.define({
-  id: "codework.tool.exa",
+  // `vendor.domain.context`. The `codework.` namespace is reserved for built-ins, and the harness
+  // refuses to load a plugin that claims it.
+  id: "exa.tool.search",
   kind: "tool",
   setup(ctx, options) {
     const config = resolveConfig(options);
