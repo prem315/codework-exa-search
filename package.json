@@ -2,6 +2,7 @@
   "name": "codework-tool-exa",
   "version": "0.1.0",
   "description": "Exa AI search tool plugin for CodeWork",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
