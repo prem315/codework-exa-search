@@ -1,0 +1,33 @@
+{
+  "name": "codework-tool-exa",
+  "version": "0.1.0",
+  "description": "Exa AI search tool plugin for CodeWork",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "tsc && node --test test/**/*.test.mjs"
+  },
+  "peerDependencies": {
+    "effect": "^3.12.0 || ^4.0.0"
+  },
+  "dependencies": {
+    "@codeworksh/plugin": "0.0.1-dev.20260923022514"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "effect": "4.0.0-rc.115",
+    "typescript": "^5.9.0"
+  }
+}
