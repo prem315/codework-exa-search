@@ -11,12 +11,6 @@ codework plugin add codework-exa-search          # this project (.codework/setti
 codework plugin add codework-exa-search -g       # every project (your user settings)
 ```
 
-Or straight from git — the built `dist/` is committed, because CodeWork installs git plugins with lifecycle scripts disabled:
-
-```sh
-codework plugin add 'git+https://github.com/prem315/codework-exa-search.git#main'
-```
-
 `plugin add` records the entry and installs it. On a fresh checkout that already declares it, run `codework plugin install`.
 
 ## Configuration

@@ -1,7 +1,5 @@
 node_modules/
+dist/
 .DS_Store
 *.log
 .env
-
-# Built output is committed: CodeWork installs git plugins with scripts disabled, so a
-# `git+…` install gets exactly what is in the repository and never runs `build`.
