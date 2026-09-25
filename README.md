@@ -1,36 +1,44 @@
-# codework-tool-exa
+# codework-exa-search
 
 Exa AI web search tool plugin for [CodeWork](https://github.com/codeworksh/codework).
 
-It registers the `exa_search` tool, allowing AI agents to perform live neural and keyword web searches and inspect extracted text highlights.
+It registers the `exa_search` tool (plugin ID `exa.tool.search`), letting agents search the live web and read extracted text highlights.
 
 ## Installation
 
-Add the plugin to your CodeWork configuration:
+```sh
+codework plugin add codework-exa-search          # this project (.codework/settings.jsonc)
+codework plugin add codework-exa-search -g       # every project (your user settings)
+```
+
+`plugin add` records the entry and installs it. On a fresh checkout that already declares it, run `codework plugin install`.
+
+## Configuration
+
+Configure it with a second entry that names the plugin, next to the one that loads it:
 
 ```jsonc
 // .codework/settings.jsonc or ~/.codework/settings.jsonc
 {
   "plugins": [
-    "codework-tool-exa",
+    "codework-exa-search",
     {
-      "package": "codework-tool-exa",
-      "options": {
-        "apiKey": "your-exa-api-key",
-        "defaultNumResults": 5
-      }
+      "plugin": "exa.tool.search",
+      "options": { "defaultNumResults": 5 }
     }
   ]
 }
 ```
 
-Alternatively, you can provide the API key through the `EXA_API_KEY` environment variable.
+The configuration entry only sets options; it never loads anything. It can also address the plugin by the string that loaded it (`"package": "codework-exa-search"`), or turn it off in one project that inherits it from user settings (`"enabled": false`).
+
+Prefer the `EXA_API_KEY` environment variable to `options.apiKey`, so the key stays out of a settings file you might commit.
 
 ## Configuration Options
 
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
-| `apiKey` | `string` | `process.env.EXA_API_KEY` | Your Exa AI API key. |
+| `apiKey` | `string` | `process.env.EXA_API_KEY` | Your Exa API key. |
 | `defaultNumResults` | `number` | `5` | Default number of search results to return (clamped between 1 and 20). |
 
 ## Tool: `exa_search`
@@ -41,7 +49,7 @@ Searches the web via Exa AI.
 
 - `query` (string, required): The search query to look up on the web.
 - `numResults` (number, optional): Number of results to return (1-20).
-- `type` (`"auto"` | `"neural"` | `"keyword"`, optional): Type of search to perform.
+- `type` (`"auto"` | `"fast"` | `"instant"` | `"deep"`, optional): `auto` (default) balances quality and speed, `fast`/`instant` trade depth for latency, `deep` is slower and more thorough.
 - `includeDomains` (string[], optional): Restrict search to specific domains.
 - `excludeDomains` (string[], optional): Exclude specific domains from search.
 
@@ -50,7 +58,7 @@ Searches the web via Exa AI.
 This project follows modular TypeScript and Effect best practices:
 
 - `src/constants.ts`: System defaults, limits, and endpoint constants.
-- `src/schemas.ts`: Parameter, success, and error schemas using `@codeworksh/plugin` and `effect`.
+- `src/schemas.ts`: Parameter, success, error and Exa response schemas, using `effect`.
 - `src/config.ts`: Configuration parsing, environment resolution, and bounds clamping.
 - `src/client.ts`: Exa AI HTTP client encapsulating requests, headers, and error handling.
 - `src/format.ts`: Pure presentation functions to format search results for AI models.

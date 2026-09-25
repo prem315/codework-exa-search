@@ -7,5 +7,7 @@ export const EXA_API_KEY_ENV = "EXA_API_KEY";
 
 export const DEFAULT_SEARCH_TYPE = "auto" as const;
 export const DEFAULT_TEXT_MAX_CHARACTERS = 1500;
-export const DEFAULT_HIGHLIGHTS_NUM_SENTENCES = 3;
-export const DEFAULT_HIGHLIGHTS_PER_URL = 3;
+/** Exa sizes highlights by characters; `numSentences` and `highlightsPerUrl` are deprecated and ignored. */
+export const DEFAULT_HIGHLIGHTS_MAX_CHARACTERS = 600;
+/** How much page text is shown when a result has no highlights. */
+export const TEXT_PREVIEW_CHARACTERS = 500;

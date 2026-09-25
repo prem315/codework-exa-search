@@ -1,6 +1,6 @@
 {
   "name": "codework-exa-search",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Exa AI search tool plugin for CodeWork",
   "license": "MIT",
   "author": "Prem Patel",
@@ -9,8 +9,8 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "files": [
@@ -34,14 +34,14 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "tsc && node --test test/**/*.test.mjs",
+    "test": "tsc && node --test test/*.test.mjs",
     "prepublishOnly": "pnpm run build && pnpm test"
   },
   "peerDependencies": {
-    "effect": "^3.12.0 || ^4.0.0"
+    "effect": "4.0.0-rc.115"
   },
   "dependencies": {
-    "@codeworksh/plugin": "dev"
+    "@codeworksh/plugin": "0.0.1-dev.20260925150557"
   },
   "devDependencies": {
     "@types/node": "^26.5.1",
